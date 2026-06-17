@@ -1,6 +1,7 @@
 import {AppError} from "../utils/AppError";
 import User from "../models/user.model";
 import otpGenerator from "otp-generator";
+import {Otp} from "../models/otp.model";
 
 interface IUserData {
     fullname : string;

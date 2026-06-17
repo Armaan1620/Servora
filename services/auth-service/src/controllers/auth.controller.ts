@@ -25,6 +25,9 @@ const signUpController = async (req: Request, res: Response) => {
         const newOtp = await registerUser({fullname, email, password, role});
 
         res.status(201).json({
+            success: true,
+            message: "OTP sent successfully",
+            data: newOtp,
         } as ApiResponse<typeof newOtp>)
     }
     catch(error : any){

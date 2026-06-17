@@ -1,11 +1,11 @@
 import mongoose from "mongoose";
 
-interface IOtp {
+export interface IOtp {
     email : string;
     otp : string;
 }
 
-const otpSchema = new mongoose.Schema({
+ const otpSchema = new mongoose.Schema<IOtp>({
     email : {
         type : String ,
         required : [true, " Email is required"],
@@ -18,3 +18,5 @@ const otpSchema = new mongoose.Schema({
         maxLength : 6,
     }
 })
+
+export const Otp = mongoose.model<IOtp>("Otp", otpSchema);
