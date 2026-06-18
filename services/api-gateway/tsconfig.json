@@ -4,8 +4,8 @@
     // File Layout
     "rootDir": "./src",
     "outDir": "./dist",
-    "module": "es6",
-    "target": "esnext",
+    "module": "commonjs",
+    "target": "es6",
     "types": ["node"],
     "strict": true,
     "esModuleInterop": true,

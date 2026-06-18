@@ -1,6 +1,8 @@
-import express from "express";
+import express, { Application } from "express";
+import router from "./routes/auth.routes";
+const app : Application = express();
+app.use(express.json());
 
-const app = express();
-
+app.use("/" , router)
 
 export default app;

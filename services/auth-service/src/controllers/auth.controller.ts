@@ -1,10 +1,10 @@
 import express , { Request, Response } from "express";
 import IUser from "../models/user.model";
 import { AppError } from "../utils/AppError";
-import { registerUser } from "../services/auth.service";
+import { sendEmailService } from "../services/auth.service";
 import { ApiResponse } from "../types/apiResponse.types";
 
-const signUpController = async (req: Request, res: Response) => {
+export const sendEmailController = async (req: Request, res: Response) => {
 
     try{
         // fetch data
@@ -22,7 +22,7 @@ const signUpController = async (req: Request, res: Response) => {
 
         //service call
 
-        const newOtp = await registerUser({fullname, email, password, role});
+        const newOtp = await sendEmailService({fullname, email, password, role});
 
         res.status(201).json({
             success: true,
