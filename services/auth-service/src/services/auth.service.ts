@@ -1,51 +1,36 @@
-import {AppError} from "../utils/AppError";
+import { Otp } from "../models/otp.model";
 import User from "../models/user.model";
-import otpGenerator from "otp-generator";
-import axios from "axios";
-import mailTemplate from "../templates/mail.template";
-import {Otp} from "../models/otp.model";
+import { AppError } from "../utils/AppError";
 
 interface IUserData {
     fullname : string;
     email : string;
     password : string;
     role : "User" | "Worker" | "Admin";
+    otp : string;
 }
+export const signUpService = async(data : IUserData) => {
+    //fetch data
+    const { fullname, email, password, role, otp } = data;
 
-export const sendEmailService = async(data : IUserData) => {
-    const { fullname, email, password, role } = data;
-
-    const isExist = await User.findOne({ email : email });
-
-    if(isExist){
+    // check if user is already registered
+    const isRegistered = await User.findOne({ email : email });
+    if(isRegistered){
         throw new AppError("User already exists",409);
     }
 
-    const newOtp = await otpGenerator.generate(6, 
-        {
-            upperCaseAlphabets: false,
-            lowerCaseAlphabets: false,
-            specialChars: false 
-        });
-        
-        const otpDoc = await Otp.create({ 
-            email : email,
-             otp : newOtp
-             });
+    //latest otp
+    const latestOtp = await Otp.findOne({ email : email }).sort({ createdAt: -1 });
 
-             const mailData = {
-                email : email,
-                subject : "OTP for verification",
-                body : mailTemplate.replace("{{OTP}}", newOtp),
-                from : "Server@example.com"
-             }
+    if(!latestOtp){
+        throw new AppError("OTP not found",404);
+    }
 
-             try {
-                await axios.post("http://localhost:5001/api/v1/send-mail", mailData);
-             } catch (error: any) {
-                const message = error.response?.data?.message || error.message || "Failed to send email";
-                throw new AppError(message, error.response?.status || 502);
-             }
+    if(latestOtp.otp !== otp){
+        throw new AppError("Invalid OTP",400);
+    }
 
-        return otpDoc;
+    //create user
+    const newUser = await User.create({ fullname, email, password, role });
+    return newUser;
 }
